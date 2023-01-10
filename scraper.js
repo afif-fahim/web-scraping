@@ -9,6 +9,10 @@ const initialUrl = 'https://www.otomoto.pl/ciezarowe/uzytkowe/mercedes-benz/q-ac
 const ads = [];
 const truckData = [];
 
+
+/**
+ * @desc Scrape the actual ads to find required data and store the data in truckData array
+ */
 const scrapeTruckItem = async () => {
     let adsLength = ads.length;
     for (let index = 0; index < adsLength; index++) {
@@ -59,6 +63,11 @@ const scrapeTruckItem = async () => {
     }
 }
 
+/**
+ * @desc Add id and url of ads to ads array from list page
+ * 
+ * @param {Object} $ - cheerio object
+ */
 const addItems = async ($) => {
     const adsData = $("article[data-testid='listing-ad']");
 
@@ -70,11 +79,23 @@ const addItems = async ($) => {
     });
 }
 
+/**
+ * @desc Get total ads count for current page
+ * 
+ * @param {Object} $ - cheerio object
+ * @returns {Number} Returns ads count number
+ */
 const getTotalAdsCount = async ($) => {
     const adsCount = $("article[data-testid='listing-ad']").length;
     return adsCount;
 }
 
+/**
+ * @desc Get url of next page if next page exists
+ * 
+ * @param {Object} $ - cheerio object
+ * @returns {String} Returns url of next page
+ */
 const getNextPageUrl = async ($) => {
     const nextPageDisabled = $("li[data-testid='pagination-step-forwards']").attr("aria-disabled");
     if(nextPageDisabled === 'true') return null;
@@ -83,7 +104,11 @@ const getNextPageUrl = async ($) => {
     return `${initialUrl}&page=${pageNo}`;
 }
 
-
+/**
+ * @desc Initiate scraping and parse data to csv after scraping is finished
+ * 
+ * @param {String} initialUrl - initial url to start
+ */
 const scrape = async (initialUrl) => {
     try {
         const { data } = await axios.get(initialUrl);
